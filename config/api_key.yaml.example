@@ -1,0 +1,4 @@
+binance:
+  0:
+    api_key: your_api_key
+    secret: your_secret_key

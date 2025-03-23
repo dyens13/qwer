@@ -1,0 +1,11 @@
+numpy
+pandas
+matplotlib
+multidict
+oauth2client
+PyMySQL
+PyYAML
+requests
+scipy
+gspread
+python-telegram-bot==13.15
