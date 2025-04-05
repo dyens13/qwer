@@ -4,7 +4,6 @@ from utils.ftns_general import expr_replace, expr_replace_simple
 
 
 class Operations:
-
     @staticmethod
     def scale(pos, scale=simBK, max_mode=False):
         return cs_scale(pos, scale, ignore_tiny=True, max_mode=max_mode)

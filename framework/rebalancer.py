@@ -252,7 +252,7 @@ class Rebalancer:
 
         return len(orders)
 
-    def rebalancing(self, stg_in_symbol, method='open'):
+    def rebalancing(self, stg_in_symbol, method='open', zero_out_rest=False):
         print(f'{logging_dt()}\tstart rebalancing for {self.MAXTIME:.2f} minutes!')
         trade_method = {
             'open': self.sub_rebalancing_open,
@@ -267,7 +267,10 @@ class Rebalancer:
         # check excluded coin
         for symbol in self.init_pos.keys():
             if symbol not in stg_in_symbol.keys():
-                stg_in_symbol[symbol] = 0
+                if zero_out_rest:
+                    stg_in_symbol[symbol] = 0
+                else:
+                    stg_in_symbol[symbol] = self.init_pos.get(symbol, 0)
         self.stg = stg_in_symbol
         self.univ = stg_in_symbol.keys()
         self.start_time = datetime.now()
@@ -298,5 +301,19 @@ class Rebalancer:
 if __name__ == '__main__':
     api = ApiBinance('binance', live=True)
     reb = Rebalancer(api, MAXTIME=30)
-    # stg = {'BTCUSDT': 0.1, 'ETHUSDT': -10}  # in amt
-    # test = reb.rebalancing(stg, method='twap')
+    stg = {'BTCUSDT': 0.1, 'ETHUSDT': -10}  # in amt
+    reb.rebalancing(stg, method='twap')
+    # will trade 30m equally
+    # after trade, futures position will become 'long BTC and short ETH'
+
+    stg2 = {'BTCUSDT': -0.1, 'XRPUSDT': 20}  # in amt
+    reb.rebalancing(stg2, method='open')
+    # will trade ASAP
+    # after trade, futures position will become 'BTC -0.1, ETH 0, XRP 20'
+    # note that ETH pos becomes 0
+
+    stg3 = {'XRPUSDT': 10}  # in amt
+    reb.rebalancing(stg3, method='open', zero_out_rest=True)
+    # will trade ASAP
+    # after trade, futures position will become 'BTC -0.1, ETH 0, XRP 10'
+    # with only_target=True, rebalancer will trade instruments on stg only

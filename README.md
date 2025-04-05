@@ -19,6 +19,8 @@
 - 8 : get used to mdf framework (framework/mdf.py)
 - 9 : check ApiClass/binance.py and read what functions we have
 ----------------------------
-- 9-1 : check ex_simple.py for simple buy and sell
-- 9-2 : checkex_alpha.py for simple statistical arbitrage(= alpha research)
+- 10-0 : set leverage and margin type by set_ex.py
+- 10-1 : check ex_simple.py for simple buy and sell
+- 10-2 : checkex_alpha.py for simple statistical arbitrage(= alpha research)
+- 11 : you may use framework/rebalancer for set positions
 ----------------------------

@@ -50,6 +50,17 @@ class DerivedFields:
     def returns(o):
         return (o.close / o.close.shift(1)).clip(MIN_PRICE_RATIO, MAX_PRICE_RATIO) - 1.0
 
+    @staticmethod
+    def hml(o):
+        return o.high - o.low
+
+    @staticmethod
+    def takerRatio(o):
+        return o.takerUsd / o.usd
+
+    @staticmethod
+    def basis(o):
+        return o.close / o.xclose - 1
 
 class WindowedFields:
     @staticmethod
@@ -123,3 +134,17 @@ class WindowedFields:
         if n == 1:
             return o.returns
         return (o.close / o.close.shift(n)).clip(MIN_PRICE_RATIO, MAX_PRICE_RATIO) - 1.0
+
+    @staticmethod
+    def hml(o, n):
+        if n == 1:
+            return o.hml
+        return eval(f'o.high{n} - o.low{n}')
+
+    @staticmethod
+    def takerRatio(o, n):
+        return o.takerUsd.rolling(n).sum() / o.usd.rolling(n).sum()
+
+    @staticmethod
+    def basis(o, n):
+        return o.basis.rolling(n).mean()
