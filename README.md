@@ -1,26 +1,14 @@
-----------------------------
-- my referral link : https://accounts.binance.com/register?ref=36504442
-- without referral -> pay $4 to Binance as fee for trading $10000
-- with referral -> same $4 fee for trading $10000 but $3.2 for Binance and $0.8 for me for 1 year
-----------------------------
-- how to start
-- 1 : install ccxt (choose 1-1 or 1-2)
-- 1-1 : pip install ccxt  (not recommended since too heavy)
-- 1-2 : pull my ccxt (https://github.com/dyens13/ccxt) and install manually
-
-- 2 : go to mqf folder
-- 3 : pip install -r requirements.txt
-
-- 4 : make api key on binance, should set ip whitelist to avoid api key expiration
-- 5 : on /config folder, change file name from api_key.yaml.example to api_key.yaml
-- 6 : enter your api info on /config/api_key.yaml
-- 7 : make telegram bot(read caption on utils/ftns_telegram.py)
-----------------------------
-- 8 : get used to mdf framework (framework/mdf.py)
-- 9 : check ApiClass/binance.py and read what functions we have
-----------------------------
-- 10-0 : set leverage and margin type by set_ex.py
-- 10-1 : check ex_simple.py for simple buy and sell
-- 10-2 : checkex_alpha.py for simple statistical arbitrage(= alpha research)
-- 11 : you may use framework/rebalancer for set positions
-----------------------------
+---
+- mdf : data wrapper, 바로 사용 가능
+- rebalancer : 거래 봇, api key 필요
+- alpha research tool : long-short statistical arbitrage 백테스트 툴
+- set_ex.py : 거래 시작 전 레버리지 설정 등
+---
+- 아래 파일들을 정독해보세요.
+- example/mdf.py
+- example/simple.py
+- example/alpha.py
+---
+- 혹시나 처음 가입하신다면 레퍼럴 링크를 이용해주시면 감사하겠습니다
+- https://accounts.binance.com/register?ref=36504442
+- 이 링크로 가입하시면 가입 후 1년간 거래소에 내야햐하는 수수료(=거래금액의 0.04%)의 4/5는 거래소, 1/5는 저에게 오게됩니다.(0.008%)

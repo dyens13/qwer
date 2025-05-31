@@ -1,9 +1,11 @@
 from framework.mqf import Simulation
 from framework.operations import Operations
 from utils.ftns_general import expr_replace_simple
+from data_collect.binance.klines_api import get_available_coins
 
 univ = ['BTC', 'ETH', 'ETC', 'XRP', 'EOS', 'BNB', 'DOGE']
 # univ = ['BTC', 'ETH', 'TRUMP', 'SOL', 'PNUT', 'NEIRO', 'NOT', 'ENA', 'BOME', 'KAITO', 'ORDI', 'MOODENG', 'DOGE', 'AVAX', 'ACT', 'TIA', 'XRP', 'USUAL', 'MOVE', 'DOGS', 'RARE', '1000BONK', 'LINK', 'IO', 'MEME', 'VINE', 'IP', 'GOAT', '1000LUNC', 'TST', 'BERA', 'PENGU', 'ZRO', 'MANTA', '1000SATS', 'BLUR', 'ETHFI', 'BNB', 'BB', 'BIGTIME', 'GAS', 'FARTCOIN', 'XAI', 'AI16Z', 'ADA', 'JTO', 'SUN', 'PIXEL', 'MELANIA', 'NEIROETH', '1MBABYDOGE', 'THE', 'DYDX', 'ALT', 'AIXBT', 'TROY', 'ME', 'VANA', 'HIVE', 'LAYER', 'SWARMS', 'MOCA', 'W', 'VIRTUAL', 'STRK', 'EIGEN', 'WLD', 'SEI', 'OP', 'AEVO', 'CATI', 'ARC', 'LISTA', '1000PEPE', 'GMT', 'SAGA', 'ARB', 'VVV', 'RUNE', 'DYM', 'LTC', 'DRIFT', 'ACE', 'GALA', 'DOT', 'TRB', 'DIA', 'ZK', 'FIL', 'UXLINK', '1000SHIB', 'NEAR', 'ETC', 'BIO', 'ATOM', 'JUP', 'BCH', 'MYRO', 'HMSTR']
+# univ = get_available_coins('SWAP', 'USDT')
 
 constants = {
     'univ': univ,

@@ -28,10 +28,23 @@ def get_coin_list(quote='USDT'):
 def get_available_coins(market, quote='USDT'):
     if market.upper() not in ['SPOT', 'SWAP']:
         raise Exception('market must be spot or swap')
-    result = requests.get(f'{URLs[market.upper()]}/ticker/price')
-    js = result.json()
-    symbols = [x['symbol'] for x in js]
-    coin_list = [x[:-1 * len(quote)] for x in symbols if x.endswith(quote.upper())]
+    result = requests.get(f'{URLs[market.upper()]}/ticker/price').json()
+    tickers = {}
+    for item in result:
+        if not item['symbol'].endswith(quote):
+            continue
+        tickers[item['symbol']] = item
+    if market == 'SPOT':
+        symbols = [x['symbol'] for x in result]
+        coin_list = [x[:-1 * len(quote)] for x in symbols if x.endswith(quote.upper())]
+    else:
+        btc_time = tickers['BTCUSDT']['time']
+        coin_list = []
+        for symbol, data in tickers.items():
+            time_diff_ms = abs(data['time'] - btc_time)
+            if time_diff_ms < 60000:
+                coin = symbol[:-len(quote)]
+                coin_list.append(coin)
     return coin_list
 
 
