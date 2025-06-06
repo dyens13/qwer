@@ -7,5 +7,3 @@ PyMySQL
 PyYAML
 requests
 scipy
-gspread
-python-telegram-bot==13.15

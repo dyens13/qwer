@@ -1,23 +1,31 @@
-import telegram
-# pip install python-telegram-bot==13.15
-# pip install python-telegram-bot --upgrade
+import requests
 
 # to find your id, find 'userinfobot' on telegram
 user = 'your_id'
-
 # to get your bot token, find 'BotFather' on telegram and follow instruction
-your_bot = telegram.Bot(token='your_token')
+your_bot = 'your_token'
 
 
-def send_telegram(text, bot=your_bot, to_id=user):
-    if isinstance(bot, str):
-        bot = globals()[bot]
+def send_telegram(message, token=your_bot, to_id=user):
+    url = f'https://api.telegram.org/bot{token}/sendMessage'
     try:
-        bot.sendMessage(chat_id=to_id, text=text)
+        resp = requests.post(url, data={'chat_id': to_id, 'text': message})
+        resp.raise_for_status()
+
+        result = resp.json()
+        if not result.get('ok', False):
+            raise RuntimeError(f"Telegram API error: {result}")
+
+    except requests.exceptions.RequestException as e:
+        print(f"[send_telegram] Request exception occurred: {e}")
+        raise
+    except ValueError:
+        print("[send_telegram] Could not parse Telegram response as JSON.")
+        raise
     except Exception as e:
-        print(e)
-        pass
-    return None
+        print(f"[send_telegram] Telegram API returned an error: {e}")
+        raise
+    return True
 
 
 if __name__ == '__main__':

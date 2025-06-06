@@ -117,35 +117,54 @@ class MDF:
 
     def __getattr__(self, field):
         if field in self._loaded_fields:
-            return eval(f'self.df.{field}')
-        else:
-            if '_diff' in field:
-                s, n = field.split('_diff')
-                return getattr(self, s).diff(int(n))
-            elif '_shift' in field:
-                s, n = field.split('_shift')
-                return getattr(self, s).shift(int(n))
-            else:
-                if field.startswith('swap'):
-                    # fixme
-                    raise NotImplementedError
-                if '_' in field:
-                    # prefix, body = field.split('_')
-                    prefix = field.split('_')[0]
-                    # body = field.split(prefix + '_')[1]
-                    body = field[len(prefix) + 1:]
-                    s, n = split_str_num(prefix)
-                    temp_data = getattr(self, body)
-                    data = getattr(TSTransforms, s)(temp_data, n)
+            return getattr(self.df, field)
+
+        if "_diff" in field:
+            s, n = field.split("_diff", 1)
+            return getattr(self, s).diff(int(n))
+        if "_shift" in field:
+            s, n = field.split("_shift", 1)
+            return getattr(self, s).shift(int(n))
+
+        if field.startswith("x") and len(field) > 1:
+            rest = field[1:]
+            proxy = _SpotProxy(self)
+
+            if "_" in rest:
+                prefix, n_str = rest.split("_", 1)
+                n = int(n_str)
+                if hasattr(TSTransforms, prefix):
+                    data = getattr(TSTransforms, prefix)(getattr(proxy, prefix), n)
                 else:
-                    s, n = split_str_num(field)
-                    if n is None:
-                        data = getattr(DerivedFields, s)(self)
-                    else:
-                        data = getattr(WindowedFields, s)(self, n)
-                self.df[field] = data
-                self._loaded_fields.add(field)
-                return getattr(self, field)
+                    data = getattr(WindowedFields, prefix)(proxy, n)
+
+            else:
+                if hasattr(DerivedFields, rest):
+                    data = getattr(DerivedFields, rest)(proxy)
+                else:
+                    s2, n2 = split_str_num(rest)
+                    data = getattr(WindowedFields, s2)(proxy, n2)
+
+            self.df[field] = data
+            self._loaded_fields.add(field)
+            return data
+
+        if "_" in field:
+            prefix, body = field.split("_", 1)
+            s3, n3 = split_str_num(prefix)
+            temp_data = getattr(self, body)
+            data = getattr(TSTransforms, s3)(temp_data, n3)
+
+        else:
+            s4, n4 = split_str_num(field)
+            if n4 is None:
+                data = getattr(DerivedFields, s4)(self)
+            else:
+                data = getattr(WindowedFields, s4)(self, n4)
+
+        self.df[field] = data
+        self._loaded_fields.add(field)
+        return data
 
     def clear_fields(self):
         _to_clear = self._loaded_fields - self._base_fields
@@ -246,6 +265,14 @@ class MDF:
             pass
         finally:
             return output
+
+
+class _SpotProxy:
+    def __init__(self, mdf_obj):
+        self._mdf = mdf_obj
+
+    def __getattr__(self, attr):
+        return getattr(self._mdf, 'x' + attr)
 
 
 if __name__ == '__main__':
