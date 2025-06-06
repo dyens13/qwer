@@ -12,22 +12,23 @@
 - --> framework/rebalancer.py
 - set_ex.py : 거래 시작 전 레버리지 설정 등
 ------------------------------------------------------------------------
--
 - api key 발급하기
 - 바이낸스 회원가입 (이미 했다면 패스)
-- (https://accounts.binance.com/register?ref=36504442 에서 가입해주시면 감사하겠습니다.)
-- api key 발급 (https://www.binance.com/en/my/settings/api-management)
+  - https://accounts.binance.com/register?ref=36504442 에서 가입해주시면 감사하겠습니다
+- api key 발급
+  - https://www.binance.com/en/my/settings/api-management
 - config/api_key.yaml.example 에서 뒤에 .example을 지우고, 생성한 api key 정보를 입력하세요
-- (ip whitelist를 등록하지 않으면 한달마다 재생성해야하니 주의하세요)
+  - ip whitelist를 등록하지 않으면 한달마다 재생성해야하니 주의하세요
 ---
-- api 이용을 위해선 ccxt 설치가 필요하며 두가지 방법이 필요합니다.
-1. pip install ccxt  (비추천)   
-2. https://github.com/dyens13/ccxt 다운로드 후 직접 설치
+- api 이용을 위해선 ccxt 설치가 필요하며 두가지 방법중 하나를 선택하세요.
+  1. pip install ccxt  (비추천)   
+  2. https://github.com/dyens13/ccxt 다운로드 후 직접 설치
 - ccxt란?
-- 여러 암호화폐 거래소의 다양한 api를 통합해주는 툴
-- 지금은 기능이 너무 많고 용량이 매우 커서 저는 예전 버전에서 필요한 부분만 따로 사용중
+  - 여러 암호화폐 거래소의 다양한 api를 통합해주는 툴
+  - 지금은 기능이 너무 많고 용량이 매우 커서 저는 예전 버전에서 필요한 부분만 따로 사용중
 ---
-- referral이란? (제 레퍼럴 링크 : https://accounts.binance.com/register?ref=36504442 )
+- referral이란?
+  - 제 레퍼럴 링크 : https://accounts.binance.com/register?ref=36504442
 - 가입 후 1년간 거래소에 내야햐하는 수수료(=거래금액의 0.04%)의 4/5는 거래소, 1/5는 저에게 오게됩니다.
-- = 총 거래금액의 0.032%는 거래소, 0.008%는 저에게.
-- 가입 1년 후엔 0.04% 모두 바이낸스로.
+  - 총 거래금액의 0.032%는 거래소, 0.008%는 저에게.
+  - 가입 1년 후엔 0.04% 모두 바이낸스로.
