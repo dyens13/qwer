@@ -1,16 +1,18 @@
 ---
-- mdf : data wrapper, 바로 사용 가능 (바이낸스 가입 안해도 사용 가능)
-- --> example/mdf.py
----
-- alpha research tool : long-short statistical arbitrage 백테스트 툴
-- --> example/alpha.py
----
-- simple bot example  (바이낸스 계정 및 api키 필요)
-- --> example/simple.py
----
-- rebalancer : 바이낸스 거래 봇, 바이낸스 가입 및 api key 필요
-- --> framework/rebalancer.py
-- set_ex.py : 거래 시작 전 레버리지 설정 등
+- mdf : data wrapper
+  - 바로 사용 가능 (바이낸스 가입 안해도 가능)
+  - example/mdf.py
+- alpha research tool
+  - long-short statistical arbitrage 백테스트 툴
+  - example/alpha.py
+- simple bot example
+  - 바이낸스 계정 및 api키 필요
+  - example/simple.py
+- rebalancer
+  - 바이낸스 거래 봇, 바이낸스 가입 및 api key 필요
+  - framework/rebalancer.py
+- set_ex.py
+  - 거래 시작 전 레버리지 설정 등
 ------------------------------------------------------------------------
 - api key 발급하기
 - 바이낸스 회원가입 (이미 했다면 패스)
