@@ -26,9 +26,11 @@ def get_coin_list(quote='USDT'):
 
 
 def get_available_coins(market, quote='USDT'):
-    if market.upper() not in ['SPOT', 'SWAP']:
+    # return coins
+    market = market.upper()
+    if market not in ['SPOT', 'SWAP']:
         raise Exception('market must be spot or swap')
-    result = requests.get(f'{URLs[market.upper()]}/ticker/price').json()
+    result = requests.get(f'{URLs[market]}/ticker/price').json()
     tickers = {}
     for item in result:
         if not item['symbol'].endswith(quote):
@@ -40,9 +42,11 @@ def get_available_coins(market, quote='USDT'):
     else:
         btc_time = tickers['BTCUSDT']['time']
         coin_list = []
+        m_in_ms = 6e4
+        bdd_ms = 10 * m_in_ms
         for symbol, data in tickers.items():
             time_diff_ms = abs(data['time'] - btc_time)
-            if time_diff_ms < 60000:
+            if time_diff_ms < bdd_ms:
                 coin = symbol[:-len(quote)]
                 coin_list.append(coin)
     return coin_list
@@ -90,6 +94,37 @@ def get_klines(coin, quote, market, interval, startTime=None, endTime=None, leng
             print('# sleep to avoid IP ban from high API CALL LIMIT')
             time.sleep(10)
         return result.json()
+
+
+def get_klines_range(coin, quote, market, interval, startTime, endTime=None, callfast=True):
+    if market.lower() == 'spot':
+        unit_limit = 1000
+    elif market.lower() == 'swap':
+        unit_limit = 1500 if callfast else 499
+    else:
+        raise ValueError('inst should be one of (spot, swap)')
+
+    output = []
+    next_start = startTime
+    end_ts = convert_to_timestamp(endTime, 'milliseconds') if endTime else None
+    interval_ms = interval_to_minute(interval) * 60 * 1000
+
+    while True:
+        chunk = get_klines(coin, quote, market, interval, startTime=next_start, endTime=endTime, length=unit_limit)
+        if not chunk:
+            break
+        output.extend(chunk)
+        last_open_ts = int(chunk[-1][0])
+        next_start_ts = last_open_ts + interval_ms
+        if len(chunk) < unit_limit:
+            break
+        if end_ts is not None and next_start_ts > end_ts:
+            break
+        next_start = next_start_ts
+
+    if end_ts is not None:
+        output = [row for row in output if int(row[0]) <= end_ts]
+    return list_str_to_float(output)
 
 
 def get_recent_klines(coin, quote, market, interval, length, only_complete=False, callfast=True):
