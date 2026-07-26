@@ -5,6 +5,9 @@ _CUR_DIR = Path(os.path.dirname(__file__))
 PARENT_DIR = str(_CUR_DIR.parent)
 api_yaml = f'{PARENT_DIR}/config/api_key.yaml'
 
+# Local-only parquet cache root for source='parquet' MDF loads.
+DATA_CACHE_DIR = _CUR_DIR.parent / 'data_collect' / 'data_cache'
+
 TZ_shift = 9
 
 PERIOD_DICT = {1: '1m', 5: '5m', 15: '15m', 30: '30m', 60: '1h', 240: '4h', 1440: '1d', 10080: '1w'}

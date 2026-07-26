@@ -7,6 +7,7 @@ from scipy.signal import argrelextrema
 import data_collect.binance.klines_api as binance_klines_api
 import data_collect.upbit.klines_api as upbit_klines_api
 from config.constants import TZ_shift
+from data_collect.klines_parquet_cache import load_cached_klines_df
 from data_collect.klines_mgr import get_klines_range, get_recent_klines
 from framework.dataFields import DerivedFields, TSTransforms, WindowedFields
 from utils.ftns_datetime import interval_to_minute
@@ -50,6 +51,9 @@ def resolve_coin_name_and_scale(coin, market_list):
         match = re.match(r'^(\d{3,})([A-Z]+)$', symbol.upper())
         if match:
             return match.group(2), int(match.group(1))
+        match_million = re.match(r'^(\d+)M([A-Z]+)$', symbol.upper())
+        if match_million:
+            return match_million.group(2), int(match_million.group(1)) * 1000000
         return symbol.upper(), 1
 
     base_coin, scale = extract_scale_and_coin(coin)
@@ -68,8 +72,6 @@ def resolve_coin_name_and_scale(coin, market_list):
 
 
 def klines_to_df(klines, exchange, source='api', scale=1):
-    max_price_ratio = 5.0
-    min_price_ratio = 0.2
     if source == 'api':
         df = pd.DataFrame(
             data=klines,
@@ -91,8 +93,6 @@ def klines_to_df(klines, exchange, source='api', scale=1):
         if not type(df['dt']) is str:
             df['dt'] = pd.to_datetime(df['dt'] + 1000 * 60 * 60 * TZ_shift, unit='ms')
         df = df.set_index('dt')
-        df['vwap'] = df['usd'] / df['amt']
-        df['takerRatio'] = df['takerUsd'] / df['usd']
         del df['ignore']
         del df['dt_close']
     elif source == 'db':
@@ -113,10 +113,11 @@ def klines_to_df(klines, exchange, source='api', scale=1):
         )
         df.columns = ['dt', 'open', 'high', 'low', 'close', 'amt', 'usd', 'trades', 'takerAmt', 'takerUsd']
         df = df.set_index('dt')
-        df['vwap'] = df['usd'] / df['amt']
-        df['takerRatio'] = df['takerUsd'] / df['usd']
     else:
         raise ValueError(f'source must be api or db, not {source}')
+
+    df['vwap'] = df['usd'] / df['amt']
+    df['takerRatio'] = df['takerUsd'] / df['usd']
 
     if scale > 1:
         for field in PRICE_FIELDS:
@@ -162,10 +163,30 @@ def get_df(
                 only_complete=True,
                 callfast=callfast,
             )
+    elif source == 'parquet':
+        df = load_cached_klines_df(
+            coin=coin_resolved,
+            quote=quote,
+            market=market,
+            interval=stride,
+            exchange=exchange,
+            history=history,
+            callfast=callfast,
+            start=start,
+            end=end,
+        )
+        df['vwap'] = df['usd'] / df['amt']
+        df['takerRatio'] = df['takerUsd'] / df['usd']
+        if scale > 1:
+            for field in PRICE_FIELDS:
+                df[field] *= scale
+            for field in ['amt', 'takerAmt']:
+                df[field] /= scale
+        return df
     elif source == 'db':
         raise NotImplementedError('db source is not included in this public project')
     else:
-        raise ValueError(f'source must be api or db, not {source}')
+        raise ValueError(f'source must be api, db, or parquet, not {source}')
 
     return klines_to_df(klines, exchange, source, scale=scale)
 

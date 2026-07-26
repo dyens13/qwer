@@ -7,7 +7,7 @@ from utils.ftns_stat import get_stat, plot_series, stat_to_text, simul
 
 class Simulation:
     def __init__(self, coins, insts, interval, history, source, alphapool):
-        self.df = MDF(coins, insts, stride=interval, history=history)
+        self.df = MDF(coins, insts, stride=interval, history=history, source=source)
         self.alphapool = alphapool
         self._pos = None
         self._combos = None

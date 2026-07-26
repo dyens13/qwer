@@ -7,3 +7,4 @@ PyMySQL
 PyYAML
 requests
 scipy
+pyarrow
